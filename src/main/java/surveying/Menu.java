@@ -1,5 +1,7 @@
 package surveying;
 
+import surveying.drone.Drone;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,5 +40,9 @@ public class Menu {
 
     public static boolean isFileExists(File file) {
         return file.exists() && !file.isDirectory();
+    }
+
+    public int getBatteryLevel(Drone drone) {
+        return (int)drone.getBattery();
     }
 }

@@ -16,7 +16,10 @@ public class Drone {
     public Position position = new Position(0, 0);
     private final Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
-
+    private double battery = 24.0;
+    public double getBattery() {
+        return battery;
+    }
 
     public Drone(List<EntryData> inputData) {
         this.vision = new HashMap<>();
@@ -106,6 +109,12 @@ public class Drone {
             }
             sleep(100);
             System.out.printf("Current coordinates: %s \n", position.toString());
+
+            battery -= 0.1;
+            if (battery <= 1) {
+                System.out.println("Battery is dead");
+                return;
+            }
         }
         for (int i = 0; i < 3; i++){
             forceMoveDown();

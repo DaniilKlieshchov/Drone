@@ -15,5 +15,7 @@ public class Main {
         Drone drone = new Drone(entryData);
         drone.survey(entryData);
 
+
+        System.out.println((int)drone.getBattery() + "%");
     }
 }
