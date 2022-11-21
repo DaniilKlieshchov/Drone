@@ -1,14 +1,20 @@
+package surveying.drone;
+
+import surveying.EntryData;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Thread.sleep;
+
 
 public class Drone {
-    int buildingCounter;
-    Directions previousStep = Directions.NONE;
-    List<EntryData> inputData;
-    Position position = new Position(0, 0);
-    Map<Directions, Position> vision;
+    public int buildingCounter;
+    public Directions previousStep = Directions.NONE;
+    public final List<EntryData> inputData;
+    public Position position = new Position(0, 0);
+    private final Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
 
 
@@ -68,6 +74,45 @@ public class Drone {
         } else if (vision.get(Directions.BACK).getX() == xBuildingSecondWall) {
             return Directions.BACK;
         } else return Directions.NONE;
+    }
+
+    public void survey(List<EntryData> entryData) throws InterruptedException{
+        System.out.println("Surveying started...");
+        while (buildingCounter <= entryData.size() - 1) {
+            if (position.getY() < Drone.PREDETERMINED_HEIGHT){
+                moveUp();
+                System.out.printf("Current coordinates: %s \n", position.toString());
+                continue;
+            }
+            Directions direction = scan();
+            switch (direction) {
+                case FRONT -> {
+                    moveUp();
+                    previousStep = Directions.FRONT;
+                }
+                case BACK -> {
+                    moveDown();
+                    previousStep = Directions.BACK;
+                }
+                case DOWN -> {
+                    moveForward();
+                    previousStep = Directions.DOWN;
+                }
+                case NONE -> {
+                    if (previousStep.equals(Directions.BACK)) moveDown();
+                    else moveForward();
+                    previousStep = Directions.NONE;
+                }
+            }
+            sleep(100);
+            System.out.printf("Current coordinates: %s \n", position.toString());
+        }
+        for (int i = 0; i < 3; i++){
+            forceMoveDown();
+            sleep(100);
+            System.out.printf("Current coordinates: %s \n", position.toString());
+        }
+        System.out.println("Mission completed");
     }
 
 }
