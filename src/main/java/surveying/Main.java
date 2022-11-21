@@ -8,9 +8,12 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        Parser parser = new Parser("src/main/resources/data.txt");
+        Menu menu = new Menu();
+
+        Parser parser = new Parser("src/main/resources/" + menu.chooseRoute());
         List<EntryData> entryData = parser.parseFile();
         Drone drone = new Drone(entryData);
         drone.survey(entryData);
+
     }
 }
