@@ -1,9 +1,8 @@
-package surveying.menu;
+package surveying.controller;
 
-import surveying.EntryData;
-import surveying.Parser;
+import surveying.controller.utilities.EntryData;
+import surveying.controller.utilities.Parser;
 import surveying.drone.Drone;
-import surveying.drone.DroneStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Menu {
+public class DroneController {
 
     public static final Path PATH = Paths.get("src/main/resources");
     private boolean isCorrect;
@@ -44,8 +43,6 @@ public class Menu {
             }
 
             operation = Operation.fromId(chose);
-
-
             switch (Objects.requireNonNull(operation)) {
                 case ROUTE -> startSurvey(drone);
                 case BATTERY -> System.out.println("The battery level: " + (int) drone.getBattery() + "%");
@@ -86,6 +83,7 @@ public class Menu {
     public void startSurvey(Drone drone) throws IOException, InterruptedException {
         Parser parser = new Parser("src/main/resources/" + chooseRoute());
         List<EntryData> entryData = parser.parseFile();
+        drone.clearData();
         drone.recordInput(entryData);
         drone.survey(entryData);
     }

@@ -1,4 +1,4 @@
-package surveying;
+package surveying.controller.utilities;
 
 import java.io.*;
 import java.util.ArrayList;

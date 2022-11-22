@@ -1,4 +1,4 @@
-package surveying.menu;
+package surveying.controller;
 
 public enum Operation {
     AGAIN(0),

@@ -1,6 +1,6 @@
 package surveying.drone;
 
-import surveying.EntryData;
+import surveying.controller.utilities.EntryData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +18,7 @@ public class Drone {
     static public int PREDETERMINED_HEIGHT = 3;
     public DroneStatus status = DroneStatus.READY;
     private double battery = 100.0;
+
     public double getBattery() {
         return battery;
     }
@@ -29,6 +30,15 @@ public class Drone {
         this.vision.put(Directions.UP, new Position());
         this.vision.put(Directions.DOWN, new Position());
         this.inputData = inputData;
+    }
+
+    public void clearData() {
+        this.vision = new HashMap<>();
+        this.vision.put(Directions.FRONT, new Position());
+        this.vision.put(Directions.BACK, new Position());
+        this.vision.put(Directions.UP, new Position());
+        this.vision.put(Directions.DOWN, new Position());
+        this.position = new Position();
     }
 
     public void moveForward() {
@@ -43,14 +53,14 @@ public class Drone {
     }
 
     public void moveDown() {
-        if(position.getY() > PREDETERMINED_HEIGHT) {
+        if (position.getY() > PREDETERMINED_HEIGHT) {
             position.setY(position.y - 1);
             updateVisionPosition();
-        }
-        else{
+        } else {
             buildingCounter++;
         }
     }
+
     public void forceMoveDown() {
         position.setY(position.y - 1);
         updateVisionPosition();
@@ -80,11 +90,11 @@ public class Drone {
         } else return Directions.NONE;
     }
 
-    public void survey(List<EntryData> entryData) throws InterruptedException{
+    public void survey(List<EntryData> entryData) throws InterruptedException {
         System.out.println("Surveying started...");
         status = DroneStatus.SURVEYING;
         while (buildingCounter <= entryData.size() - 1) {
-            if (position.getY() < Drone.PREDETERMINED_HEIGHT){
+            if (position.getY() < Drone.PREDETERMINED_HEIGHT) {
                 moveUp();
                 System.out.printf("Current coordinates: %s \n", position.toString());
                 continue;
@@ -118,7 +128,7 @@ public class Drone {
                 return;
             }
         }
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             forceMoveDown();
             sleep(100);
             System.out.printf("Current coordinates: %s \n", position.toString());
