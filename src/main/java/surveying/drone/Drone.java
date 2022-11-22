@@ -14,11 +14,16 @@ public class Drone {
     public Directions previousStep = Directions.NONE;
     public List<EntryData> inputData;
     public Position position = new Position(0, 0);
-    private Map<Directions, Position> vision;
+    public Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
     public DroneStatus status = DroneStatus.READY;
     private Operation operation;
     private double battery = 100.0;
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
     private boolean isPaused;
 
     public double getBattery() {
