@@ -12,16 +12,16 @@ import static java.lang.Thread.sleep;
 public class Drone {
     public int buildingCounter;
     public Directions previousStep = Directions.NONE;
-    public final List<EntryData> inputData;
+    public List<EntryData> inputData;
     public Position position = new Position(0, 0);
-    private final Map<Directions, Position> vision;
+    private Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
-    private double battery = 24.0;
+    private double battery = 100.0;
     public double getBattery() {
         return battery;
     }
 
-    public Drone(List<EntryData> inputData) {
+    public void recordInput(List<EntryData> inputData) {
         this.vision = new HashMap<>();
         this.vision.put(Directions.FRONT, new Position());
         this.vision.put(Directions.BACK, new Position());

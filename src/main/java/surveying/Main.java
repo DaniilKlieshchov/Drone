@@ -1,21 +1,19 @@
 package surveying;
 
 import surveying.drone.Drone;
+import surveying.menu.Menu;
+import surveying.menu.Operation;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
         Menu menu = new Menu();
-
-        Parser parser = new Parser("src/main/resources/" + menu.chooseRoute());
-        List<EntryData> entryData = parser.parseFile();
-        Drone drone = new Drone(entryData);
-        drone.survey(entryData);
-
-
-        System.out.println((int)drone.getBattery() + "%");
+        Drone drone = new Drone();
+        Operation chose;
+        do{
+            chose = Operation.fromId(menu.mainMenu(drone));
+        } while (chose != Operation.EXIT);
     }
 }
