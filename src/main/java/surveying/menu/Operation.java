@@ -4,7 +4,8 @@ public enum Operation {
     AGAIN(0),
     ROUTE(1),
     BATTERY(2),
-    EXIT(3);
+    STATUS(3),
+    EXIT(4);
 
 
     public int getId() {

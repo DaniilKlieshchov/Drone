@@ -16,6 +16,7 @@ public class Drone {
     public Position position = new Position(0, 0);
     private Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
+    public DroneStatus status = DroneStatus.READY;
     private double battery = 100.0;
     public double getBattery() {
         return battery;
@@ -81,6 +82,7 @@ public class Drone {
 
     public void survey(List<EntryData> entryData) throws InterruptedException{
         System.out.println("Surveying started...");
+        status = DroneStatus.SURVEYING;
         while (buildingCounter <= entryData.size() - 1) {
             if (position.getY() < Drone.PREDETERMINED_HEIGHT){
                 moveUp();
@@ -122,6 +124,7 @@ public class Drone {
             System.out.printf("Current coordinates: %s \n", position.toString());
         }
         System.out.println("Mission completed");
+        status = DroneStatus.READY;
     }
 
 }
