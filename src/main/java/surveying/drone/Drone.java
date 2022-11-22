@@ -1,10 +1,12 @@
 package surveying.drone;
 
 import surveying.EntryData;
+import surveying.menu.Operation;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.Thread.sleep;
 
@@ -18,6 +20,7 @@ public class Drone {
     static public int PREDETERMINED_HEIGHT = 3;
     public DroneStatus status = DroneStatus.READY;
     private double battery = 100.0;
+    private Operation command;
     public double getBattery() {
         return battery;
     }
@@ -127,5 +130,8 @@ public class Drone {
         status = DroneStatus.READY;
     }
 
+    public void setCommand(Operation command) {
+        this.command = command;
+    }
 }
 
