@@ -18,11 +18,10 @@ public class DroneController {
 
     public static final Path PATH = Paths.get("src/main/resources");
     private boolean isCorrect;
-    private String fileName;
 
-    public int mainMenu(Drone drone) throws IOException, InterruptedException, BrokenBarrierException {
-        Scanner scanner = new Scanner(System.in);
-        int chose = 0;
+    public int mainMenu(final Drone drone) throws IOException, InterruptedException, BrokenBarrierException {
+        final Scanner scanner = new Scanner(System.in);
+        int chose;
         Operation operation;
 
         do {
@@ -68,8 +67,9 @@ public class DroneController {
     }
 
     public String chooseRoute() throws IOException {
-        Scanner scanner = new Scanner(System.in);
+        final Scanner scanner = new Scanner(System.in);
 
+        String fileName;
         do {
             isCorrect = true;
             System.out.println("Choose the route:\n");
@@ -90,13 +90,13 @@ public class DroneController {
         return fileName;
     }
 
-    public static boolean isFileExists(File file) {
+    public static boolean isFileExists(final File file) {
         return file.exists() && !file.isDirectory();
     }
 
-    public void startSurvey(Drone drone) throws IOException, InterruptedException {
-        Parser parser = new Parser("src/main/resources/" + chooseRoute());
-        List<EntryData> entryData = parser.parseFile();
+    public void startSurvey(final Drone drone) throws IOException, InterruptedException {
+        final Parser parser = new Parser("src/main/resources/" + chooseRoute());
+        final List<EntryData> entryData = parser.parseFile();
         drone.clearData();
         drone.recordInput(entryData);
         new Thread(() -> {

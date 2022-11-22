@@ -25,7 +25,7 @@ public class Drone {
         return battery;
     }
 
-    public void recordInput(List<EntryData> inputData) {
+    public void recordInput(final List<EntryData> inputData) {
         this.vision = new HashMap<>();
         this.vision.put(Directions.FRONT, new Position());
         this.vision.put(Directions.BACK, new Position());
@@ -80,19 +80,27 @@ public class Drone {
     }
 
     public Directions scan() {
-        int yBuilding = inputData.get(buildingCounter).Height();
-        int xBuildingFirstWall = inputData.get(buildingCounter).xCoordinate();
-        int xBuildingSecondWall = inputData.get(buildingCounter).xCoordinate() + inputData.get(buildingCounter).Width();
+        final int yBuilding = inputData.get(buildingCounter).Height();
+        final int xBuildingFirstWall = inputData.get(buildingCounter).xCoordinate();
+        final int xBuildingSecondWall = inputData.get(buildingCounter).xCoordinate() + inputData.get(buildingCounter).Width();
         if (vision.get(Directions.FRONT).getX() == xBuildingFirstWall && vision.get(Directions.DOWN).getY() < yBuilding) {
-            return Directions.FRONT;
+            {
+                return Directions.FRONT;
+            }
         } else if (vision.get(Directions.DOWN).getY() == yBuilding && vision.get(Directions.BACK).getX() < xBuildingSecondWall) {
-            return Directions.DOWN;
+            {
+                return Directions.DOWN;
+            }
         } else if (vision.get(Directions.BACK).getX() == xBuildingSecondWall) {
-            return Directions.BACK;
-        } else return Directions.NONE;
+            {
+                return Directions.BACK;
+            }
+        } else {
+            return Directions.NONE;
+        }
     }
 
-    public void survey(List<EntryData> entryData) throws InterruptedException{
+    public void survey(final List<EntryData> entryData) throws InterruptedException{
         System.out.println("Surveying started...");
         status = DroneStatus.SURVEYING;
         while (buildingCounter <= entryData.size() - 1) {
@@ -104,13 +112,15 @@ public class Drone {
             catch (BrokenBarrierException brokenBarrierException) {
                 System.out.println();
             }
-            if (isPaused) continue;
+            if (isPaused) {
+                continue;
+            }
             if (position.getY() < Drone.PREDETERMINED_HEIGHT) {
                 moveUp();
                 //System.out.printf("Current coordinates: %s \n", position.toString());
                 continue;
             }
-            Directions direction = scan();
+            final Directions direction = scan();
             switch (direction) {
                 case FRONT -> {
                     moveUp();
@@ -125,8 +135,12 @@ public class Drone {
                     previousStep = Directions.DOWN;
                 }
                 case NONE -> {
-                    if (previousStep.equals(Directions.BACK)) moveDown();
-                    else moveForward();
+                    if (previousStep.equals(Directions.BACK)) {
+                        moveDown();
+                    }
+                    else {
+                        moveForward();
+                    }
                     previousStep = Directions.NONE;
                 }
             }
@@ -149,11 +163,11 @@ public class Drone {
 
     }
 
-    public void setOperation(Operation operation) {
+    public void setOperation(final Operation operation) {
         this.operation = operation;
     }
 
-    public void executeOperation(Operation operation) throws BrokenBarrierException, InterruptedException {
+    public void executeOperation(final Operation operation) throws BrokenBarrierException, InterruptedException {
 //        Main.barrier.await();
         switch (Objects.requireNonNull(operation)) {
             case BATTERY -> System.out.println("The battery level: " + (int) this.getBattery() + "%");
@@ -174,8 +188,12 @@ public class Drone {
                 System.out.println(getProgress());
             }
             case EXIT -> {
-                if (getProgress() == 100.0) System.out.println("Good bye");
-                else System.out.println("Operation is not available");
+                if (getProgress() == 100.0) {
+                    System.out.println("Good bye");
+                }
+                else {
+                    System.out.println("Operation is not available");
+                }
             }
             case GET_LOCATION -> System.out.println(this.position);
             case ROUTE -> System.out.println("");

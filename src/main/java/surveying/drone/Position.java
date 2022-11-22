@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class Position {
-    int x;
-    int y;
+    /* default */ int x;
+    /* default */ int y;
 
-    public Position(int x, int y) {
+    public Position(final int x, final int y) {
         this.x = x;
         this.y = y;
     }
@@ -21,7 +21,7 @@ public class Position {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(final int x) {
         this.x = x;
     }
 
@@ -29,7 +29,7 @@ public class Position {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(final int y) {
         this.y = y;
     }
 

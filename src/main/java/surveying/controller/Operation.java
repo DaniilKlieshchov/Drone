@@ -1,6 +1,8 @@
 package surveying.controller;
 
 public enum Operation {
+
+
     AGAIN(0),
     ROUTE(1),
     BATTERY(2),
@@ -12,20 +14,18 @@ public enum Operation {
     CHECK_PROGRESS(8),
     GET_LOCATION(9),
     NOTHING(10);
-
+    private final int id;
 
     public int getId() {
         return id;
     }
 
-    private final int id;
-
-    Operation(int id) {
+    Operation(final int id) {
         this.id = id;
     }
 
-    public static Operation fromId(int id) {
-        for (Operation type : values()) {
+    public static Operation fromId(final int id) {
+        for (final Operation type : values()) {
             if (type.getId() == id) {
                 return type;
             }
