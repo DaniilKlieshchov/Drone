@@ -1,10 +1,10 @@
 package surveying.drone;
 
+import surveying.controller.Operation;
 import surveying.controller.utilities.EntryData;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
 
 import static java.lang.Thread.sleep;
 
@@ -17,7 +17,9 @@ public class Drone {
     private Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
     public DroneStatus status = DroneStatus.READY;
+    private Operation operation;
     private double battery = 100.0;
+    private boolean isPaused;
 
     public double getBattery() {
         return battery;
@@ -90,13 +92,22 @@ public class Drone {
         } else return Directions.NONE;
     }
 
-    public void survey(List<EntryData> entryData) throws InterruptedException {
+    public void survey(List<EntryData> entryData) throws InterruptedException{
         System.out.println("Surveying started...");
         status = DroneStatus.SURVEYING;
         while (buildingCounter <= entryData.size() - 1) {
+            try {
+                if(Optional.ofNullable(operation).isPresent()){
+                    this.executeOperation(operation);
+                }
+            }
+            catch (BrokenBarrierException brokenBarrierException) {
+                System.out.println();
+            }
+            if (isPaused) continue;
             if (position.getY() < Drone.PREDETERMINED_HEIGHT) {
                 moveUp();
-                System.out.printf("Current coordinates: %s \n", position.toString());
+                //System.out.printf("Current coordinates: %s \n", position.toString());
                 continue;
             }
             Directions direction = scan();
@@ -119,8 +130,8 @@ public class Drone {
                     previousStep = Directions.NONE;
                 }
             }
-            sleep(100);
-            System.out.printf("Current coordinates: %s \n", position.toString());
+            sleep(150);
+            //System.out.printf("Current coordinates: %s \n", position.toString());
 
             battery -= 0.1;
             if (battery <= 1) {
@@ -135,7 +146,52 @@ public class Drone {
         }
         System.out.println("Mission completed");
         status = DroneStatus.READY;
+
     }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+
+    public void executeOperation(Operation operation) throws BrokenBarrierException, InterruptedException {
+//        Main.barrier.await();
+        switch (Objects.requireNonNull(operation)) {
+            case BATTERY -> System.out.println("The battery level: " + (int) this.getBattery() + "%");
+            case STATUS -> System.out.println("The drone status: " + this.status);
+            case PAUSE -> {
+                System.out.println("Drone paused");
+                isPaused = true;
+            }
+            case RESET -> {
+                System.out.println("Drone in process...");
+                isPaused = false;
+            }
+            case ABORT -> {
+                System.out.println("Mission aborted");
+                clearData();
+            }
+            case CHECK_PROGRESS -> {
+                System.out.println(getProgress());
+            }
+            case EXIT -> {
+                if (getProgress() == 100.0) System.out.println("Good bye");
+                else System.out.println("Operation is not available");
+            }
+            case GET_LOCATION -> System.out.println(this.position);
+            case ROUTE -> System.out.println("");
+            default -> System.out.println("operation is not available");
+        }
+        this.operation = null;
+    }
+
+//    public void pause() throws BrokenBarrierException, InterruptedException {
+//        Main.barrier.await();
+//    }
+    public double getProgress(){
+        return (double) position.x / (inputData.get(inputData.size() - 1).xCoordinate() + 3) * 100;
+    }
+
+
 
 }
 

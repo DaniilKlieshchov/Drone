@@ -5,7 +5,13 @@ public enum Operation {
     ROUTE(1),
     BATTERY(2),
     STATUS(3),
-    EXIT(4);
+    EXIT(4),
+    PAUSE(5),
+    RESET(6),
+    ABORT(7),
+    CHECK_PROGRESS(8),
+    GET_LOCATION(9),
+    NOTHING(10);
 
 
     public int getId() {

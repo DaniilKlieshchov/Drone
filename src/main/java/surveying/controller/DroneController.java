@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.BrokenBarrierException;
 
 public class DroneController {
 
@@ -19,36 +20,49 @@ public class DroneController {
     private boolean isCorrect;
     private String fileName;
 
-    public int mainMenu(Drone drone) throws IOException, InterruptedException {
+    public int mainMenu(Drone drone) throws IOException, InterruptedException, BrokenBarrierException {
         Scanner scanner = new Scanner(System.in);
         int chose = 0;
         Operation operation;
 
         do {
+//            if (chose != 0) Main.barrier.await();
             isCorrect = true;
             System.out.println("""
                     \nChoose the option:
                     1 - Choose the route to start survey
                     2 - Check battery level
                     3 - Check drone status
-                    4 - Turn off the drone""");
+                    4 - Turn off the drone
+                    5 - Pause drone
+                    6 - Reset drone
+                    7 - Abort mission
+                    8 - Check progress
+                    9 - Get location""");
             System.out.println();
 
             chose = scanner.nextInt();
 
-            if (chose < 1 || chose > 4) {
+            if (chose < 1 || chose > 9) {
                 isCorrect = false;
                 System.out.println("\nEnter correct number of option.\n");
                 chose = 0;
             }
 
+
             operation = Operation.fromId(chose);
-            switch (Objects.requireNonNull(operation)) {
-                case ROUTE -> startSurvey(drone);
-                case BATTERY -> System.out.println("The battery level: " + (int) drone.getBattery() + "%");
-                case STATUS -> System.out.println("The drone status: " + drone.status);
-                case EXIT -> System.out.println("Good bye");
+            drone.setOperation(Operation.fromId(chose));
+            Thread.sleep(200);
+            if (Objects.requireNonNull(operation) == Operation.ROUTE) {
+                startSurvey(drone);
+//                case BATTERY -> System.out.println("The battery level: " + (int) drone.getBattery() + "%");
+//                case STATUS -> System.out.println("The drone status: " + drone.status);
+//                case EXIT -> System.out.println("Good bye");
             }
+//            if (Objects.requireNonNull(operation) == Operation.PAUSE) {
+//                Main.barrier.await();
+//            }
+
         } while (!isCorrect);
         return chose;
     }
@@ -85,6 +99,13 @@ public class DroneController {
         List<EntryData> entryData = parser.parseFile();
         drone.clearData();
         drone.recordInput(entryData);
-        drone.survey(entryData);
+        new Thread(() -> {
+            try {
+                drone.survey(entryData);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
     }
 }
