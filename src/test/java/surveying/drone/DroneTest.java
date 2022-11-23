@@ -6,10 +6,10 @@ import surveying.controller.Operation;
 import surveying.controller.utilities.EntryData;
 import surveying.controller.utilities.Parser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +19,13 @@ class DroneTest {
     Drone drone = new Drone();
     Parser parser = new Parser("src/main/resources/testroute.txt");
     List<EntryData> entryData = parser.parseFile();
+    private final PrintStream standardOut = System.out;
+    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+
+    @BeforeEach
+    public void setUp() {
+        System.setOut(new PrintStream(outputStreamCaptor));
+    }
 
     @BeforeEach
     void record(){
@@ -78,6 +85,7 @@ class DroneTest {
     @Test
     void setOperation() {
         drone.setOperation(Operation.AGAIN);
+        assertEquals(Operation.fromId(0), drone.getOperation());
     }
 
     @Test
@@ -95,41 +103,49 @@ class DroneTest {
     @Test
     void executeOperationAbort() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.ABORT);
+        assertEquals("Mission aborted",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationBattery() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.BATTERY);
+        assertEquals("The battery level: 100%",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationStatus() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.STATUS);
+        assertEquals("The drone status: " + DroneStatus.READY.toString(),  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationProgress() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.CHECK_PROGRESS);
+        assertEquals("0.0",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationExit() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.EXIT);
+        assertEquals("Operation is not available",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationLocation() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.GET_LOCATION);
+        assertEquals("(0; 0)",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationRoute() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.ROUTE);
+        assertEquals("",  outputStreamCaptor.toString().trim());
     }
 
     @Test
     void executeOperationDefault() throws BrokenBarrierException, InterruptedException {
         drone.executeOperation(Operation.AGAIN);
+        assertEquals("operation is not available",  outputStreamCaptor.toString().trim());
     }
 
     @Test

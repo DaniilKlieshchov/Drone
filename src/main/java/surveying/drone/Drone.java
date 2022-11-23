@@ -17,6 +17,11 @@ public class Drone {
     public Map<Directions, Position> vision;
     static public int PREDETERMINED_HEIGHT = 3;
     public DroneStatus status = DroneStatus.READY;
+
+    public Operation getOperation() {
+        return operation;
+    }
+
     private Operation operation;
     private double battery = 100.0;
 
