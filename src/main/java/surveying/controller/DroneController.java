@@ -19,25 +19,24 @@ public class DroneController {
     public static final Path PATH = Paths.get("src/main/resources");
     private boolean isCorrect;
 
-    public int mainMenu(final Drone drone) throws IOException, InterruptedException, BrokenBarrierException {
+    public int mainMenu(final Drone drone) throws IOException, InterruptedException{
         final Scanner scanner = new Scanner(System.in);
         int chose;
         Operation operation;
 
         do {
-//            if (chose != 0) Main.barrier.await();
             isCorrect = true;
             System.out.println("""
                     \nChoose the option:
                     1 - Choose the route to start survey
                     2 - Check battery level
                     3 - Check drone status
-                    4 - Turn off the drone
+                    4 - Get location
                     5 - Pause drone
                     6 - Reset drone
                     7 - Abort mission
                     8 - Check progress
-                    9 - Get location""");
+                    9 - Turn off the drone""");
             System.out.println();
 
             chose = scanner.nextInt();
@@ -48,19 +47,13 @@ public class DroneController {
                 chose = 0;
             }
 
-
             operation = Operation.fromId(chose);
             drone.setOperation(Operation.fromId(chose));
             Thread.sleep(200);
+
             if (Objects.requireNonNull(operation) == Operation.ROUTE) {
                 startSurvey(drone);
-//                case BATTERY -> System.out.println("The battery level: " + (int) drone.getBattery() + "%");
-//                case STATUS -> System.out.println("The drone status: " + drone.status);
-//                case EXIT -> System.out.println("Good bye");
             }
-//            if (Objects.requireNonNull(operation) == Operation.PAUSE) {
-//                Main.barrier.await();
-//            }
 
         } while (!isCorrect);
         return chose;
@@ -94,7 +87,7 @@ public class DroneController {
         return file.exists() && !file.isDirectory();
     }
 
-    public void startSurvey(final Drone drone) throws IOException, InterruptedException {
+    public void startSurvey(final Drone drone) throws IOException{
         final Parser parser = new Parser("src/main/resources/" + chooseRoute());
         final List<EntryData> entryData = parser.parseFile();
         drone.clearData();

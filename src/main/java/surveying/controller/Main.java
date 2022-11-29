@@ -8,6 +8,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Main {
     public static CyclicBarrier barrier = new CyclicBarrier(2);
+
     public static void main(final String[] args) throws IOException, InterruptedException, BrokenBarrierException {
 
         final DroneController menu = new DroneController();

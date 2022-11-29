@@ -6,6 +6,7 @@ import surveying.controller.utilities.EntryData;
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 
+import static java.lang.Math.round;
 import static java.lang.Thread.sleep;
 
 
@@ -110,16 +111,15 @@ public class Drone {
         }
     }
 
-    public void survey(final List<EntryData> entryData) throws InterruptedException{
+    public void survey(final List<EntryData> entryData) throws InterruptedException {
         System.out.println("Surveying started...");
         status = DroneStatus.SURVEYING;
         while (buildingCounter <= entryData.size() - 1) {
             try {
-                if(Optional.ofNullable(operation).isPresent()){
+                if (Optional.ofNullable(operation).isPresent()) {
                     this.executeOperation(operation);
                 }
-            }
-            catch (BrokenBarrierException brokenBarrierException) {
+            } catch (BrokenBarrierException brokenBarrierException) {
                 System.out.println();
             }
             if (isPaused) {
@@ -127,7 +127,6 @@ public class Drone {
             }
             if (position.getY() < Drone.PREDETERMINED_HEIGHT) {
                 moveUp();
-                //System.out.printf("Current coordinates: %s \n", position.toString());
                 continue;
             }
             final Directions direction = scan();
@@ -147,16 +146,13 @@ public class Drone {
                 case NONE -> {
                     if (previousStep.equals(Directions.BACK)) {
                         moveDown();
-                    }
-                    else {
+                    } else {
                         moveForward();
                     }
                     previousStep = Directions.NONE;
                 }
             }
             sleep(150);
-            //System.out.printf("Current coordinates: %s \n", position.toString());
-
             battery -= 0.1;
             if (battery <= 1) {
                 System.out.println("Battery is dead");
@@ -177,8 +173,7 @@ public class Drone {
         this.operation = operation;
     }
 
-    public void executeOperation(final Operation operation) throws BrokenBarrierException, InterruptedException {
-//        Main.barrier.await();
+    public void executeOperation(final Operation operation) throws BrokenBarrierException{
         switch (Objects.requireNonNull(operation)) {
             case BATTERY -> System.out.println("The battery level: " + (int) this.getBattery() + "%");
             case STATUS -> System.out.println("The drone status: " + this.status);
@@ -195,13 +190,10 @@ public class Drone {
                 clearData();
             }
             case CHECK_PROGRESS -> {
-                System.out.println(getProgress());
+                System.out.println("Progress: " + getProgress() + "%");
             }
             case EXIT -> {
-                if (getProgress() == 100.0) {
-                    System.out.println("Good bye");
-                }
-                else {
+                if (status == DroneStatus.SURVEYING) {
                     System.out.println("Operation is not available");
                 }
             }
@@ -212,13 +204,9 @@ public class Drone {
         this.operation = null;
     }
 
-//    public void pause() throws BrokenBarrierException, InterruptedException {
-//        Main.barrier.await();
-//    }
-    public double getProgress(){
-        return (double) position.x / (inputData.get(inputData.size() - 1).xCoordinate() + 3) * 100;
+    public double getProgress() {
+        return round((double) position.x / (inputData.get(inputData.size() - 1).xCoordinate() + +inputData.get(inputData.size() - 1).Width() + 3) * 100.0);
     }
-
 
 
 }
